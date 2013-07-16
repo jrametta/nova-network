@@ -11,6 +11,7 @@ recipe            "nova-setup", ""
 recipe            "quantum-dhcp-agent", ""
 recipe            "quantum-l3-agent", ""
 recipe            "quantum-ovs-plugin", ""
+recipe            "quantum-brocade-plugin", ""
 recipe            "quantum-plugin", ""
 recipe            "quantum-server", ""
 

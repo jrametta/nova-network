@@ -43,6 +43,8 @@ mysql_info =
   get_access_endpoint("mysql-master", "mysql", "db")
 quantum_info = get_settings_by_role("nova-network-controller", "quantum")
 local_ip = get_ip_for_net('nova', node)
+
+# jeff: update this for brocade driver
 vlan_ranges = node["quantum"]["ovs"]["provider_networks"].
   collect { |k,v| v['vlans'].split(',').each do |vlan_range|
     vlan_range.prepend(k + ":") end }.join(',')
@@ -114,25 +116,48 @@ template "/etc/quantum/api-paste.ini" do
   )
 end
 
-template "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" do
-  source "ovs_quantum_plugin.ini.erb"
-  owner "root"
-  group "quantum"
-  mode "0640"
-  variables(
-    "db_ip_address" => mysql_info["host"],
-    "db_user" => quantum_info["db"]["username"],
-    "db_password" => quantum_info["db"]["password"],
-    "db_name" => quantum_info["db"]["name"],
-    "ovs_firewall_driver" => node["quantum"]["ovs"]["firewall_driver"],
-    "ovs_network_type" => node["quantum"]["ovs"]["network_type"],
-    "ovs_tunnel_ranges" => node["quantum"]["ovs"]["tunnel_ranges"],
-    "ovs_integration_bridge" => node["quantum"]["ovs"]["integration_bridge"],
-    "ovs_tunnel_bridge" => node["quantum"]["ovs"]["tunnel_bridge"],
-    "ovs_vlan_range" => vlan_ranges,
-    "ovs_bridge_mapping" => bridge_mappings,
-    "ovs_debug" => node["quantum"]["debug"],
-    "ovs_verbose" => node["quantum"]["verbose"],
-    "ovs_local_ip" => local_ip
-  )
+
+# jeff: added case statement for ovs or brocade
+# Not sure that this really belongs here
+case node["quantum"]["plugin"]
+when "ovs"
+	template "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" do
+	  source "ovs_quantum_plugin.ini.erb"
+	  owner "root"
+	  group "quantum"
+	  mode "0640"
+	  variables(
+		"db_ip_address" => mysql_info["host"],
+		"db_user" => quantum_info["db"]["username"],
+		"db_password" => quantum_info["db"]["password"],
+		"db_name" => quantum_info["db"]["name"],
+		"ovs_firewall_driver" => node["quantum"]["ovs"]["firewall_driver"],
+		"ovs_network_type" => node["quantum"]["ovs"]["network_type"],
+		"ovs_tunnel_ranges" => node["quantum"]["ovs"]["tunnel_ranges"],
+		"ovs_integration_bridge" => node["quantum"]["ovs"]["integration_bridge"],
+		"ovs_tunnel_bridge" => node["quantum"]["ovs"]["tunnel_bridge"],
+		"ovs_vlan_range" => vlan_ranges,
+		"ovs_bridge_mapping" => bridge_mappings,
+		"ovs_debug" => node["quantum"]["debug"],
+		"ovs_verbose" => node["quantum"]["verbose"],
+		"ovs_local_ip" => local_ip
+	  )
+	end
+when "brocade"
+	template "/etc/quantum/plugins/brocade/brocade.ini" do
+		source "brocade.ini.erb"
+		owner "root"
+		group "quantum"
+		mode "0640"
+		variables(
+			"db_ip_address" => mysql_info["host"],
+			"db_user" => quantum_info["db"]["username"],
+			"db_password" => quantum_info["db"]["password"],
+			"db_name" => quantum_info["db"]["name"],
+			"brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
+			"brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
+			"brocade_vdx_ipaddress" => node["quantum"]["brocade"]["vdx_ipaddress"]
+			# add bridge mappings, physnet, etc..
+		)
+	end
 end
