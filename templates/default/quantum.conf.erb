@@ -7,6 +7,9 @@ bind_port = <%= @quantum_port %>
 <% if @quantum_plugin == "ovs" %>
 core_plugin = quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2
 <% end %>
+<% if @quantum_plugin == "brocade" %>
+core_plugin = quantum.plugins.brocade.QuantumPlugin.BrocadePluginV2
+<% end %>
 allow_overlapping_ips = <%= @overlapping_ips %>
 use_namespaces = <%= @quantum_namespace %>
 api_paste_config = /etc/quantum/api-paste.ini

@@ -70,6 +70,19 @@ service "quantum-server" do
   subscribes :restart, "template[/etc/quantum/quantum.conf]", :delayed
   subscribes :restart, "template[/etc/quantum/api-paste.ini]", :delayed
   subscribes :restart, "template[/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini]", :delayed
+  subscribes :restart, "template[/etc/quantum/plugins/brocade/brocade.ini]", :delayed
+end
+
+if node["quantum"]["plugin"] == "brocade"
+	template "/etc/default/quantum-server" do 
+		source "quantum-server.erb"
+		owner "root"
+		group "root"
+		mode "0644"
+		variables(
+			# jeff: add attributes for choosing ini files
+		)
+	end
 end
 
 # Adds db Indexing for the hosts as found in the agents table.

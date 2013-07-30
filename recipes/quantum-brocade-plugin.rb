@@ -31,31 +31,19 @@ end
 
 # Brocade plugin uses the linux bridge agent
 service "quantum-plugin-linuxbridge-agent" do
-  # service_name node["quantum"]["ovs"]["service_name"]
-  service_name node["quantum"]["linuxbridge"]["service_name"]
+  service_name node["quantum"]["brocade"]["service_name"]
   supports :status => true, :restart => true
   action :enable
   subscribes :restart, "template[/etc/quantum/quantum.conf]", :delayed
   subscribes :restart, "template[/etc/quantum/plugins/brocade/brocade.ini]", :delayed
 end
 
-service "openvswitch-switch" do
-  service_name "openvswitch-switch"
-  supports :status => true, :restart => true
-  action [:enable, :start]
-end
-
-execute "create integration bridge" do
-  command "ovs-vsctl add-br #{node["quantum"]["ovs"]["integration_bridge"]}"
-  action :run
-  not_if "ovs-vsctl show | grep 'Bridge br-int'" ## FIXME
-end
-
-node["quantum"]["ovs"]["provider_networks"].each do |k,v|
-    execute "create provider bridge #{v['bridge']}" do
-        command "ovs-vsctl add-br #{v['bridge']}"
-        action :run
-        notifies :restart, "service[quantum-plugin-openvswitch-agent]", :delayed
-        not_if "ovs-vsctl list-br | grep #{v['bridge']}" ## FIXME
-    end
+template "/etc/init/quantum-plugin-linuxbridge-agent.conf" do
+	source "quantum-plugin-linuxbridge-agent.conf.erb"
+	owner "root"
+	group "root"
+	mode "0644"
+	variables(
+		# jeff: add attributes for choosing ini files
+	)
 end
