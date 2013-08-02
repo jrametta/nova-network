@@ -1,3 +1,10 @@
+INTRO
+=====
+
+This cookbook has been forked from rcbops to include support for the Brocade VCS
+plugin for Neutron OpenStack Networking. 
+
+
 Support
 =======
 
