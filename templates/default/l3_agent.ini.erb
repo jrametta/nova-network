@@ -12,3 +12,6 @@ metadata_port = 8775
 # OVS
 interface_driver = quantum.agent.linux.interface.OVSInterfaceDriver
 <% end %>
+<% if @quantum_plugin == "brocade" %>
+interface_driver = quantum.agent.linux.interface.BridgeInterfaceDriver
+<% end %>

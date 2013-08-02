@@ -133,13 +133,14 @@ default["quantum"]["ovs"]["firewall_driver"] =
 
 # Brocade
 default["quantum"]["brocade"]["packages"] = [
-  "quantum-plugin-brocade"
-  "quantum-plugin-linuxbridge-agent"  
+  "quantum-plugin-brocade",
+  "quantum-plugin-linuxbridge-agent",
+  "git"
 ]
 # default["quantum"]["brocade"]["service_name"] = "quantum-plugin-openvswitch-agent"  ???
 default["quantum"]["brocade"]["vdx_username"] = "admin"
 default["quantum"]["brocade"]["vdx_password"] = "password"
-default["quantum"]["brocade"]["vdx_ipaddress"] = "10.17.80.2"
+default["quantum"]["brocade"]["vdx_ipaddress"] = "10.17.87.158"
 # need to add bridge mappings, phys eth, etc...
 
 default["quantum"]["brocade"]["service_name"] = "quantum-plugin-linuxbridge-agent"

@@ -29,6 +29,20 @@ node["quantum"][plugin]["packages"].each do |pkg|
   end
 end
 
+# install ncclient
+execute "ncclient_setup" do
+  command "cd /tmp/ncclient && python setup.py install"
+  action :nothing
+end
+git "/tmp/ncclient" do
+	repository "https://code.grnet.gr/git/ncclient"
+	action :sync
+	not_if do
+		File.exists?("/usr/local/lib/python2.7/dist-packages/ncclient")
+	end
+	notifies :run, 'execute[ncclient_setup]', :delayed
+end
+
 # Brocade plugin uses the linux bridge agent
 service "quantum-plugin-linuxbridge-agent" do
   service_name node["quantum"]["brocade"]["service_name"]
@@ -43,7 +57,16 @@ template "/etc/init/quantum-plugin-linuxbridge-agent.conf" do
 	owner "root"
 	group "root"
 	mode "0644"
-	variables(
-		# jeff: add attributes for choosing ini files
-	)
+end
+
+# jeff: delete brocade plugin dir from system and grab latest from github
+directory "/usr/share/pyshared/quantum/plugins/brocade" do
+  recursive true 
+  action :delete
+end
+git "/usr/share/pyshared/quantum/plugins/brocade" do
+	repository "git://github.com/brocade/brocade.git"
+	reference "grizzly"
+	revision "grizzly"
+	action :sync
 end

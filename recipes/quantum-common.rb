@@ -44,7 +44,6 @@ mysql_info =
 quantum_info = get_settings_by_role("nova-network-controller", "quantum")
 local_ip = get_ip_for_net('nova', node)
 
-# jeff: update this for brocade driver
 vlan_ranges = node["quantum"]["ovs"]["provider_networks"].
   collect { |k,v| v['vlans'].split(',').each do |vlan_range|
     vlan_range.prepend(k + ":") end }.join(',')
@@ -62,6 +61,14 @@ end
 # *-controller role by itself won't install the OVS plugin, despite
 # quantum-server requiring the plugin's config file, so... make go
 directory "/etc/quantum/plugins/openvswitch" do
+  action :create
+  owner "root"
+  group "quantum"
+  mode "750"
+  recursive true
+end
+
+directory "/etc/quantum/plugins/brocade" do
   action :create
   owner "root"
   group "quantum"
@@ -116,9 +123,6 @@ template "/etc/quantum/api-paste.ini" do
   )
 end
 
-
-# jeff: added case statement for ovs or brocade
-# Not sure that this really belongs here
 case node["quantum"]["plugin"]
 when "ovs"
 	template "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" do
@@ -153,6 +157,8 @@ when "brocade"
 			"db_ip_address" => mysql_info["host"],
 			"db_user" => quantum_info["db"]["username"],
 			"db_password" => quantum_info["db"]["password"],
+			# jeff: not sure, do i need to use brcd_quantum?
+			# "db_name" => "brcd_quantum?charset=utf8",
 			"db_name" => quantum_info["db"]["name"],
 			"brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
 			"brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
