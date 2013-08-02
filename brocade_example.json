@@ -1,1 +1,77 @@
-../../environments/brocade_example.json
+{
+  "name": "brocade_example",
+  "description": "openstack deployment with brocade plugin",
+  "cookbook_versions": {
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+  },
+  "override_attributes": {
+    "developer_mode": false,
+    "monitoring" : {
+      "metric_provider" : "collectd",
+      "procmon_provider" : "monit"
+    },
+    "glance": {
+      "image_upload": true,
+      "images": ["cirros", "precise"]
+    },
+    "nova": {
+      "ratelimit" : {
+        "api" : { "enabled" : true },
+        "volume" : { "enabled" : true }
+      },
+			"network": {
+				"provider": "quantum"
+			},
+      "libvirt": { "virt_type": "qemu" },
+      "networks": [
+        {
+            "label": "public",
+            "ipv4_cidr": "10.10.100.0/24",
+            "num_networks": "1",
+            "network_size": "255",
+            "bridge": "br100",
+            "bridge_dev": "eth1",
+            "dns1": "8.8.8.8",
+            "dns2": "8.8.4.4"
+        },
+        {
+            "label": "private",
+            "ipv4_cidr": "172.16.101.0/24",
+            "num_networks": "1",
+            "network_size": "255",
+            "bridge": "br101",
+            "bridge_dev": "eth2",
+            "dns1": "8.8.8.8",
+            "dns2": "8.8.4.4"
+        }
+      ]
+    },
+    "quantum": {
+			"network_api_class": "nova.network.quantumv2.api.API",
+			"libvirt_vif_driver": "nova.virt.libvirt.vif.QuantumLinuxBridgeVIFDriver",
+			"linuxnet_interface_driver": "nova.network.linux_net.LinuxBridgeInterfaceDriver",
+			"firewall_driver": "nova.virt.firewall.NoopFirewallDriver",
+			"debug": "True",
+			"plugin": "brocade",
+			"provider_networks": {
+				"ph-eth1": {
+					"bridge": "br-eth1",
+					"vlans": "10:1000"
+				}
+			}
+    },
+    "mysql": {
+      "allow_remote_root": true,
+      "root_network_acl": "%"
+    },
+    "osops_networks": {
+      "nova": "10.17.80.0/20",
+      "public": "10.17.80.0/20",
+      "management": "10.17.80.0/20"
+    },
+    "package_component": "grizzly"
+  }
+}
