@@ -59,7 +59,7 @@ template "/etc/init/quantum-plugin-linuxbridge-agent.conf" do
 	mode "0644"
 end
 
-# jeff: delete brocade plugin dir from system and grab latest from github
+# delete brocade plugin dir from system and grab latest from github
 directory "/usr/share/pyshared/quantum/plugins/brocade" do
   recursive true 
   action :delete

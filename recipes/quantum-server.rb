@@ -80,7 +80,7 @@ if node["quantum"]["plugin"] == "brocade"
 		group "root"
 		mode "0644"
 		variables(
-			# jeff: add attributes for choosing ini files
+			# add attributes for choosing ini files
 		)
 	end
 end

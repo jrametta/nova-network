@@ -157,7 +157,7 @@ when "brocade"
 			"db_ip_address" => mysql_info["host"],
 			"db_user" => quantum_info["db"]["username"],
 			"db_password" => quantum_info["db"]["password"],
-			# jeff: not sure, do i need to use brcd_quantum?
+			# not sure- do i need to use brcd_quantum?
 			# "db_name" => "brcd_quantum?charset=utf8",
 			"db_name" => quantum_info["db"]["name"],
 			"brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
