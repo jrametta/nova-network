@@ -14,7 +14,7 @@ physical_interface = <%= @physical_interfaces %>
 network_vlan_ranges = <%= @network_vlan_ranges %>
 
 [AGENT]
-root_helper = sudo /usr/local/bin/quantum-rootwrap /etc/quantum/rootwrap.conf
+root_helper = sudo /usr/bin/quantum-rootwrap /etc/quantum/rootwrap.conf
 
 [LINUX_BRIDGE]
 physical_interface_mappings = <%= @interface_mappings %>
