@@ -120,9 +120,6 @@ template "/etc/quantum/quantum.conf" do
     "service_user" => quantum_info["service_user"],
     "service_tenant_name" => quantum_info["service_tenant_name"],
     "keystone_protocol" => ks_admin_endpoint["scheme"],
-	end
-	end
-	end
     "keystone_api_ipaddress" => ks_admin_endpoint["host"],
     "dhcp_lease_time" => node["quantum"]["dhcp_lease_time"],
     "keystone_admin_port" => ks_admin_endpoint["port"],
