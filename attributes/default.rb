@@ -137,17 +137,26 @@ default["quantum"]["brocade"]["packages"] = [
   "quantum-plugin-linuxbridge-agent",
   "git"
 ]
-# default["quantum"]["brocade"]["service_name"] = "quantum-plugin-openvswitch-agent"  ???
+default["quantum"]["brocade"]["service_name"] = "quantum-plugin-linuxbridge-agent"
 default["quantum"]["brocade"]["vdx_username"] = "admin"
 default["quantum"]["brocade"]["vdx_password"] = "password"
 default["quantum"]["brocade"]["vdx_ipaddress"] = "10.17.87.158"
+
+# Hash of all the physical networks to define for brocade plugin
+default["quantum"]["brocade"]["physical_networks"] = {"physnet1" =>
+                                                   { "interface" => "eth2",
+                                                     "vlans" => "1:1000"
+                                                   }
+                                                  }
+# Linux Bridge
+default["quantum"]["linuxbridge"]["packages"] = [
+  "quantum-plugin-linuxbridge",
+  "quantum-plugin-linuxbridge-agent"
+]
+default["quantum"]["linuxbridge"]["service_name"] = "quantum-plugin-linuxbridge-agent"
 # need to add bridge mappings, phys eth, etc...
 
-default["quantum"]["brocade"]["service_name"] = "quantum-plugin-linuxbridge-agent"
-
-
 case platform
-
 when "fedora", "redhat", "centos"
   default["nova-network"]["platform"] = {
     "nova_network_packages" => ["iptables", "openstack-nova-network"],

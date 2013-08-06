@@ -8,13 +8,13 @@ ostype   = NOS
 sql_connection = mysql://<%= @db_user %>:<%= @db_password %>@<%= @db_ip_address %>/<%= @db_name %>
 
 [PHYSICAL_INTERFACE]
-physical_interface = physnet1
+physical_interface = <%= @physical_interfaces %>
 
 [VLANS]
-network_vlan_ranges = physnet1:2:2000
+network_vlan_ranges = <%= @network_vlan_ranges %>
 
 [AGENT]
 root_helper = sudo /usr/local/bin/quantum-rootwrap /etc/quantum/rootwrap.conf
 
 [LINUX_BRIDGE]
-physical_interface_mappings = physnet1:eth2
+physical_interface_mappings = <%= @interface_mappings %>

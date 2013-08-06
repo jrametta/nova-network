@@ -50,6 +50,14 @@ vlan_ranges = node["quantum"]["ovs"]["provider_networks"].
 bridge_mappings = node["quantum"]["ovs"]["provider_networks"].
   collect { |k,v| "#{k}:#{v['bridge']}"}.join(',')
 
+# brocade plugin physical networks 
+brocade_physnets = node["quantum"]["brocade"]["physical_networks"].keys.join(',')
+brocade_vlan_ranges = node["quantum"]["brocade"]["physical_networks"].
+  collect { |k,v| v['vlans'].split(',').each do |vlan_range|
+    vlan_range.prepend(k + ":") end }.join(',')
+brocade_int_mappings = node["quantum"]["brocade"]["physical_networks"].
+  collect { |k,v| "#{k}:#{v['interface']}"}.join(',')
+
 # Make sure our permissions are not too, well, permissive
 directory "/etc/quantum/" do
   action :create
@@ -58,22 +66,33 @@ directory "/etc/quantum/" do
   mode "750"
 end
 
-# *-controller role by itself won't install the OVS plugin, despite
+# *-controller role by itself won't install the plugin, despite
 # quantum-server requiring the plugin's config file, so... make go
-directory "/etc/quantum/plugins/openvswitch" do
-  action :create
-  owner "root"
-  group "quantum"
-  mode "750"
-  recursive true
-end
-
-directory "/etc/quantum/plugins/brocade" do
-  action :create
-  owner "root"
-  group "quantum"
-  mode "750"
-  recursive true
+case node["quantum"]["plugin"]
+when "ovs"
+	directory "/etc/quantum/plugins/openvswitch" do
+		action :create
+		owner "root"
+		group "quantum"
+		mode "750"
+		recursive true
+	end
+when "brocade"
+	directory "/etc/quantum/plugins/brocade" do
+		action :create
+		owner "root"
+		group "quantum"
+		mode "750"
+		recursive true
+	end
+when "linuxbridge"
+	directory "/etc/quantum/plugins/linuxbridge" do
+		action :create
+		owner "root"
+		group "quantum"
+		mode "750"
+		recursive true
+	end
 end
 
 template "/etc/quantum/quantum.conf" do
@@ -101,6 +120,9 @@ template "/etc/quantum/quantum.conf" do
     "service_user" => quantum_info["service_user"],
     "service_tenant_name" => quantum_info["service_tenant_name"],
     "keystone_protocol" => ks_admin_endpoint["scheme"],
+	end
+	end
+	end
     "keystone_api_ipaddress" => ks_admin_endpoint["host"],
     "dhcp_lease_time" => node["quantum"]["dhcp_lease_time"],
     "keystone_admin_port" => ks_admin_endpoint["port"],
@@ -157,13 +179,29 @@ when "brocade"
 			"db_ip_address" => mysql_info["host"],
 			"db_user" => quantum_info["db"]["username"],
 			"db_password" => quantum_info["db"]["password"],
+			"physical_interfaces" => brocade_physnets,
+			"network_vlan_ranges" => brocade_vlan_ranges,
+			"interface_mappings" => brocade_int_mappings,
 			# not sure- do i need to use brcd_quantum?
 			# "db_name" => "brcd_quantum?charset=utf8",
 			"db_name" => quantum_info["db"]["name"],
 			"brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
 			"brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
 			"brocade_vdx_ipaddress" => node["quantum"]["brocade"]["vdx_ipaddress"]
-			# add bridge mappings, physnet, etc..
+			# need to add bridge mappings, physnet, etc..
+		)
+	end
+when "linuxbridge"
+	template "/etc/quantum/plugins/linuxbridge/linuxbridge_conf.ini" do
+		source "linuxbridge_conf.ini.erb"
+		owner "root"
+		group "quantum"
+		mode "0640"
+		variables(
+			# need to add bridge mappings, physnet, etc...
+			"db_ip_address" => mysql_info["host"],
+			"db_user" => quantum_info["db"]["username"],
+			"db_password" => quantum_info["db"]["password"]
 		)
 	end
 end

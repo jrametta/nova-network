@@ -73,14 +73,16 @@ service "quantum-server" do
   subscribes :restart, "template[/etc/quantum/plugins/brocade/brocade.ini]", :delayed
 end
 
+# update config file corrosponding to plugin
 if node["quantum"]["plugin"] == "brocade"
 	template "/etc/default/quantum-server" do 
 		source "quantum-server.erb"
 		owner "root"
 		group "root"
 		mode "0644"
+		notifies :restart, "service[quantum-server]"
 		variables(
-			# add attributes for choosing ini files
+			# add attributes for choosing ini files lb vs brcd
 		)
 	end
 end

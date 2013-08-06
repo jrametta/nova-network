@@ -21,4 +21,6 @@ when "ovs"
   include_recipe "nova-network::quantum-ovs-plugin"
 when "brocade"
 	include_recipe "nova-network::quantum-brocade-plugin"
+when "linuxbridge"
+	include_recipe "nova-network::quantum-linuxbridge-plugin"
 end
