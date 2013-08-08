@@ -70,29 +70,29 @@ end
 # quantum-server requiring the plugin's config file, so... make go
 case node["quantum"]["plugin"]
 when "ovs"
-	directory "/etc/quantum/plugins/openvswitch" do
-		action :create
-		owner "root"
-		group "quantum"
-		mode "750"
-		recursive true
-	end
+  directory "/etc/quantum/plugins/openvswitch" do
+    action :create
+    owner "root"
+    group "quantum"
+    mode "750"
+    recursive true
+  end
 when "brocade"
-	directory "/etc/quantum/plugins/brocade" do
-		action :create
-		owner "root"
-		group "quantum"
-		mode "750"
-		recursive true
-	end
+  directory "/etc/quantum/plugins/brocade" do
+    action :create
+    owner "root"
+    group "quantum"
+    mode "750"
+    recursive true
+  end
 when "linuxbridge"
-	directory "/etc/quantum/plugins/linuxbridge" do
-		action :create
-		owner "root"
-		group "quantum"
-		mode "750"
-		recursive true
-	end
+  directory "/etc/quantum/plugins/linuxbridge" do
+    action :create
+    owner "root"
+    group "quantum"
+    mode "750"
+    recursive true
+  end
 end
 
 template "/etc/quantum/quantum.conf" do
@@ -144,61 +144,61 @@ end
 
 case node["quantum"]["plugin"]
 when "ovs"
-	template "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" do
-	  source "ovs_quantum_plugin.ini.erb"
-	  owner "root"
-	  group "quantum"
-	  mode "0640"
-	  variables(
-		"db_ip_address" => mysql_info["host"],
-		"db_user" => quantum_info["db"]["username"],
-		"db_password" => quantum_info["db"]["password"],
-		"db_name" => quantum_info["db"]["name"],
-		"ovs_firewall_driver" => node["quantum"]["ovs"]["firewall_driver"],
-		"ovs_network_type" => node["quantum"]["ovs"]["network_type"],
-		"ovs_tunnel_ranges" => node["quantum"]["ovs"]["tunnel_ranges"],
-		"ovs_integration_bridge" => node["quantum"]["ovs"]["integration_bridge"],
-		"ovs_tunnel_bridge" => node["quantum"]["ovs"]["tunnel_bridge"],
-		"ovs_vlan_range" => vlan_ranges,
-		"ovs_bridge_mapping" => bridge_mappings,
-		"ovs_debug" => node["quantum"]["debug"],
-		"ovs_verbose" => node["quantum"]["verbose"],
-		"ovs_local_ip" => local_ip
-	  )
-	end
+  template "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" do
+    source "ovs_quantum_plugin.ini.erb"
+    owner "root"
+    group "quantum"
+    mode "0640"
+    variables(
+    "db_ip_address" => mysql_info["host"],
+    "db_user" => quantum_info["db"]["username"],
+    "db_password" => quantum_info["db"]["password"],
+    "db_name" => quantum_info["db"]["name"],
+    "ovs_firewall_driver" => node["quantum"]["ovs"]["firewall_driver"],
+    "ovs_network_type" => node["quantum"]["ovs"]["network_type"],
+    "ovs_tunnel_ranges" => node["quantum"]["ovs"]["tunnel_ranges"],
+    "ovs_integration_bridge" => node["quantum"]["ovs"]["integration_bridge"],
+    "ovs_tunnel_bridge" => node["quantum"]["ovs"]["tunnel_bridge"],
+    "ovs_vlan_range" => vlan_ranges,
+    "ovs_bridge_mapping" => bridge_mappings,
+    "ovs_debug" => node["quantum"]["debug"],
+    "ovs_verbose" => node["quantum"]["verbose"],
+    "ovs_local_ip" => local_ip
+    )
+  end
 when "brocade"
-	template "/etc/quantum/plugins/brocade/brocade.ini" do
-		source "brocade.ini.erb"
-		owner "root"
-		group "quantum"
-		mode "0640"
-		variables(
-			"db_ip_address" => mysql_info["host"],
-			"db_user" => quantum_info["db"]["username"],
-			"db_password" => quantum_info["db"]["password"],
-			"physical_interfaces" => brocade_physnets,
-			"network_vlan_ranges" => brocade_vlan_ranges,
-			"interface_mappings" => brocade_int_mappings,
-			# not sure- do i need to use brcd_quantum?
-			# "db_name" => "brcd_quantum?charset=utf8",
-			"db_name" => quantum_info["db"]["name"],
-			"brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
-			"brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
-			"brocade_vdx_ipaddress" => node["quantum"]["brocade"]["vdx_ipaddress"]
-			# need to add bridge mappings, physnet, etc..
-		)
-	end
+  template "/etc/quantum/plugins/brocade/brocade.ini" do
+    source "brocade.ini.erb"
+    owner "root"
+    group "quantum"
+    mode "0640"
+    variables(
+      "db_ip_address" => mysql_info["host"],
+      "db_user" => quantum_info["db"]["username"],
+      "db_password" => quantum_info["db"]["password"],
+      "physical_interfaces" => brocade_physnets,
+      "network_vlan_ranges" => brocade_vlan_ranges,
+      "interface_mappings" => brocade_int_mappings,
+      # not sure- do i need to use brcd_quantum?
+      # "db_name" => "brcd_quantum?charset=utf8",
+      "db_name" => quantum_info["db"]["name"],
+      "brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
+      "brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
+      "brocade_vdx_ipaddress" => node["quantum"]["brocade"]["vdx_ipaddress"]
+      # need to add bridge mappings, physnet, etc..
+    )
+  end
 when "linuxbridge"
-	template "/etc/quantum/plugins/linuxbridge/linuxbridge_conf.ini" do
-		source "linuxbridge_conf.ini.erb"
-		owner "root"
-		group "quantum"
-		mode "0640"
-		variables(
-			# need to add bridge mappings, physnet, etc...
-			"db_ip_address" => mysql_info["host"],
-			"db_user" => quantum_info["db"]["username"],
-			"db_password" => quantum_info["db"]["password"]
-		)
-	end
+  template "/etc/quantum/plugins/linuxbridge/linuxbridge_conf.ini" do
+    source "linuxbridge_conf.ini.erb"
+    owner "root"
+    group "quantum"
+    mode "0640"
+    variables(
+      # need to add bridge mappings, physnet, etc...
+      "db_ip_address" => mysql_info["host"],
+      "db_user" => quantum_info["db"]["username"],
+      "db_password" => quantum_info["db"]["password"]
+    )
+  end
 end
