@@ -106,8 +106,8 @@ default["quantum"]["quota_subnet"] = "10"
 default["quantum"]["quota_port"] = "50"
 default["quantum"]["quota_driver"] = "quantum.quota.ConfDriver"
 
-# Plugin defaults
-# OVS
+# OVS Plugin Defaults
+# ###################
 default["quantum"]["ovs"]["packages"] = [
   "openvswitch-datapath-dkms",
   "quantum-plugin-openvswitch",
@@ -131,7 +131,8 @@ default["quantum"]["ovs"]["provider_networks"] = {"ph-eth1" =>
 default["quantum"]["ovs"]["firewall_driver"] =
   "quantum.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver"
 
-# Brocade
+# Brocade Plugin Defaults
+# #######################
 default["quantum"]["brocade"]["packages"] = [
   "quantum-plugin-brocade",
   "quantum-plugin-linuxbridge-agent",
@@ -148,13 +149,17 @@ default["quantum"]["brocade"]["physical_networks"] = {"physnet1" =>
                                                      "vlans" => "1:1000"
                                                    }
                                                   }
-# Linux Bridge
+# Linuxbridge Plugin Defaults
+# ###########################
 default["quantum"]["linuxbridge"]["packages"] = [
   "quantum-plugin-linuxbridge",
   "quantum-plugin-linuxbridge-agent"
 ]
 default["quantum"]["linuxbridge"]["service_name"] = "quantum-plugin-linuxbridge-agent"
-# need to add bridge mappings, phys eth, etc...
+
+default["quantum"]["linuxbridge"]["firewall_driver"] =
+	"neutron.agent.linux.iptables_firewall.IptablesFirewallDriver"
+
 
 case platform
 when "fedora", "redhat", "centos"

@@ -185,7 +185,6 @@ when "brocade"
       "brocade_vdx_username" => node["quantum"]["brocade"]["vdx_username"],
       "brocade_vdx_password" => node["quantum"]["brocade"]["vdx_password"],
       "brocade_vdx_ipaddress" => node["quantum"]["brocade"]["vdx_ipaddress"]
-      # need to add bridge mappings, physnet, etc..
     )
   end
 when "linuxbridge"
@@ -195,7 +194,9 @@ when "linuxbridge"
     group "quantum"
     mode "0640"
     variables(
-      # need to add bridge mappings, physnet, etc...
+			# just use brocade attributes for now...
+      "network_vlan_ranges" => brocade_vlan_ranges,
+      "interface_mappings" => brocade_int_mappings,
       "db_ip_address" => mysql_info["host"],
       "db_user" => quantum_info["db"]["username"],
       "db_password" => quantum_info["db"]["password"]

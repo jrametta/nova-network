@@ -1,8 +1,7 @@
 [VLANS]
 # Default: network_vlan_ranges =
-# Example: network_vlan_ranges = physnet1:1000:2999
 tenant_network_type = vlan
-network_vlan_ranges = physnet1:1000:2999
+network_vlan_ranges = <%= @network_vlan_ranges %>
 
 [DATABASE]
 # Example:
@@ -12,8 +11,7 @@ reconnect_interval = 2
 
 [LINUX_BRIDGE]
 # Default: physical_interface_mappings =
-# Example: physical_interface_mappings = physnet1:eth1
-physical_interface_mappings = physnet1:eth1
+physical_interface_mappings = <%= @interface_mappings %>
 
 [AGENT]
 # Agent's polling interval in seconds
@@ -22,4 +20,5 @@ polling_interval = 2
 [SECURITYGROUP]
 # Firewall driver for realizing quantum security group function
 firewall_driver = quantum.agent.linux.iptables_firewall.IptablesFirewallDriver
+firewall_driver = <%= @ovs_firewall_driver %>
 
